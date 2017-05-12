@@ -1,115 +1,75 @@
 export default class Elevator {
-  constructor(currentFloor, motionStatus, direction) {
-    this.currentFloor = 0,
-    this.motionStatus = 'idle',
-    this.direction = 'up',
-    // this.stops = [],
+  constructor() {
+    this.floor = 0,
+    this.traversed = 0,
+    this.stops = 0,
     this.requests = [],
-    this.upRequests = [],
-    this.upStops = [],
-    this.downRequests = [],
-    this.downStops = []
+    this.riders = [],
+    this.motionStatus = 'idle'
   }
   
-  newRequests(user) {
-    if (user.direction === 'up') {
-      this.upRequests.push(user);
-      this.upStops.push(user.currentFloor);
-      this.upStops.push(user.dropOffFloor);
-      // this.handleCalls();
-    } else {
-      this.downRequests.push(user);
-      this.downStops.push(user.currentFloor);
-      this.downStops.push(user.dropOffFloor);
-    }
+  reset() {
+    this.floor = 0,
+    this.traversed = 0,
+    this.stops = [],
+    this.requests = [],
+    this.riders = [],
+    this.motionStatus = 'idle'
   }
   
-  handleCalls() {
-    //sort calls 
-    this.upStops.forEach((floor) => {
-      console.log(this.currentFloor);
-      this.currentFloor = floor;
-      this.upRequests.forEach((req) => {
-        if (req.dropOffFloor === floor) {
-          this.upRequests = this.upRequests.filter(req => req.dropOffFloor !== floor);
-        }
-      });
+  countStops() {
+    return this.stops.length;
+  }
+  
+  newCall(user) {
+    this.requests.push(user);
+    this.stops.push(user.floor);
+  }
+  
+  goToFloor(input) {
+    let addedTraversed = Math.abs(this.floor - input);
+    this.traversed += addedTraversed;
+    this.floor = input;
+    console.log('Elevator is on: ', this.floor);
+    
+  }
+  
+  loadRider() {
+    this.requests.forEach((request) => {
+      if (request.floor === this.floor) {
+        this.riders.push(request.name);
+        console.log('Elevator is picking up ', this.riders);
+      }
     });
   }
   
+  dropRider(request) {
+    this.riders.forEach(rider => {
+      if (rider === request.name) {
+        console.log('Elevator dropped off: ', request.name);
+        
+        this.riders = this.riders.filter(rider => rider !== request.name);
+        this.requests = this.requests.filter(call => call !== request);
+      }
+      console.log('Elevator now contains: ', this.riders);
+    })
+  }
+  
+  handleRequests() {
+    console.log('Elevator is on: ', this.floor);
+    if (this.requests.length) {
+      this.requests.forEach((request) => {
 
+        this.goToFloor(request.floor);
+        
+        this.loadRider();
+
+        this.goToFloor(request.dropFloor);
+        
+        this.dropRider(request);
+      });
+    }
+    console.log('Floors traversed', this.traversed);
+  }
+  
 }
-
-
-// export default class Elevator {
-//   constructor(currentFloor, motionStatus) {
-//     this.currentFloor = 0;
-//     this.motionStatus = 'idle',
-//     this.direction = 'up',
-//     this.stops = [],
-//     this.requests = [],
-//     this.upRequests = [],
-//     this.downRequests = []
-//   }
-// 
-//   handleUsers() {
-//     this.requests.forEach(user => this.goToFloor(user));
-//   }
-// 
-//   
-//   goToFloor(user) {
-//     this.pickUpUser(user);
-//     console.log(this.currentFloor);
-//     this.dropOffUser(user);
-//     console.log(this.currentFloor);
-//   }
-//   
-//   pickUpUser(user) {
-//     // this.floorsTraversed += Math.abs(this.currentFloor - user.currentFloor);
-//     this.currentFloor = user.currentFloor;
-//     this.stops.push(user.currentFloor);
-//     return this.currentFloor = user.currentFloor;
-//   }
-//   
-//   dropOffUser(user) {
-//     // this.floorsTraversed += Math.abs(this.currentFloor - Math.abs(user.dropOffFloor - user.currentFloor));
-//     this.currentFloor = user.currentFloor;
-//     this.stops.push(user.dropOffFloor);
-//     this.requests.filter(person => person.dropOffFloor !== this.currentFloor);
-//     return this.currentFloor = user.dropOffFloor;
-//   }
-//   
-//   getUsers() {
-//     this.requests.map(request => request.name);
-//   }
-// 
-//   getCurrentFloor() {
-//     return this.currentFloor;
-//   }
-//   
-//   getStops() {
-//     return this.stops;
-//   }
-//   
-//   countStops() {
-//     return this.stops.length;
-//   }
-//   
-//   addRequest(user) {
-//       this.requests.push(user);  
-//   }
-// }
-// 
-// if(elevator.direction === 'up') {
-//   split up floors to stop on in handleUsers
-//   stop on appropriate floors and drop off users
-// } else {
-//   do same for down users
-// }
-// 
-// if (going up) {
-//   handle up users, then switch to down and handle down users
-// } else {
-//   handle down users, then switch to up and handle them
-// }
-// 

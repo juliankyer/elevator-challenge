@@ -1,8 +1,8 @@
 export default class Person {
-  constructor(name, currentFloor, dropOffFloor, direction) {
+  constructor(name, floor, dropFloor, direction) {
     this.name = name,
-    this.currentFloor = currentFloor,
-    this.dropOffFloor = dropOffFloor,
+    this.floor = floor,
+    this.dropFloor = dropFloor,
     this.direction = direction
   }
 }
